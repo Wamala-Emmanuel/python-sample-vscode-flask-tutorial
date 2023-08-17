@@ -28,14 +28,14 @@ steps:
 
 - script: |
     source venv/bin/activate
-    mkdir publish
-    cp -r ./* publish
-    zip -r publish.zip ./publish
+    mkdir artifact
+    cp -r ./* artifact
+    zip -r artifact.zip ./artifact
   displayName: Create a .ZIP file artifact
 
 - task: PublishBuildArtifacts@1
   displayName: Publish build artifact
   inputs:
-    pathToPublish: './publish.zip'
-    artifactName: flask-app-artifact
+    pathToPublish: './artifact.zip'
+    artifactName: artifact
     
