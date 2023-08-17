@@ -8,20 +8,34 @@ variables:
 
 steps:
 - task: UsePythonVersion@0
+  displayName: 'Use Python $(version)'
   inputs:
     versionSpec: '$(version)'
-  displayName: 'Use Python $(version)'
 
 - script: |
+    python -m venv venv
+    source venv/bin/activate
     python -m pip install --upgrade pip
+    pip install setuptools
     pip install -r requirements.txt
   displayName: 'Install dependencies'
 
 - script: |
-    ls -a
-  displayName: 'Show files'
-
-- script: |
+    source venv/bin/activate
     pip install pytest pytest-azurepipelines
     pytest
-  displayName: 'pytest'
+  displayName: 'Run unit tests'
+
+- script: |
+    source venv/bin/activate
+    mkdir publish
+    cp -r ./* publish
+    zip -r publish.zip ./publish
+  displayName: Create a .ZIP file artifact
+
+- task: PublishBuildArtifacts@1
+  displayName: Publish build artifact
+  inputs:
+    pathToPublish: './publish.zip'
+    artifactName: flask-app-artifact
+    
